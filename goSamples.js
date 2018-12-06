@@ -8,9 +8,9 @@ if (window.require) {
   // declare required libraries and ensure Bootstrap's dependency on jQuery
   require.config({
     paths: {
-      "highlight": "../assets/js/highlight",
-      "jquery": "../assets/js/jquery.min", // 1.11.3
-      "bootstrap": "../assets/js/bootstrap.min"
+      "highlight": "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js",
+      "jquery": "https://code.jquery.com/jquery-3.3.1.min.js", // 1.11.3
+      "bootstrap": "https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.bundle.min.js"
     },
     shim: {
       "bootstrap": ["jquery"]
