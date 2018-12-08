@@ -131,18 +131,18 @@ section.info > h1{
                 
                 // Setup initial data
                 nodesObj = [
-                    {"id": "Topkring", "radius": 50, x:0,y:0},
-                    {"id": "Schoolkring", "radius": 100,x:0,y:0},
-                    {"id": "Ouderkring", "radius": 70,x:0,y:0},
-                    {"id": "Stafkring", "radius": 50,x:0,y:0},
-                    {"id": "Bemiddelingskring", "radius": 75,x:0,y:0}
+                    {"id": "Mission Circle", "radius": 50, x:0,y:0},
+                    {"id": "School Circle", "radius": 100,x:0,y:0},
+                    {"id": "Parents' Circle", "radius": 70,x:0,y:0},
+                    {"id": "Staff Circle", "radius": 50,x:0,y:0},
+                    {"id": "Mediation Circle", "radius": 75,x:0,y:0}
                   ];
 
                 linksObj = [
-                    { "source": "Topkring", "target": "Schoolkring", "type": "double" },
-                    { "source": "Topkring", "target": "Ouderkring", "type": "double" },
-                    { "source": "Topkring", "target": "Stafkring", "type": "single" },
-                    { "source": "Schoolkring", "target": "Bemiddelingskring", "type": "double" }
+                    { "source": "Mission Circle", "target": "School Circle", "type": "double" },
+                    { "source": "Mission Circle", "target": "Parents' Circle", "type": "double" },
+                    { "source": "Mission Circle", "target": "Staff Circle", "type": "single" },
+                    { "source": "School Circle", "target": "Mediation Circle", "type": "double" }
                   ]
                 var simulation;
 
