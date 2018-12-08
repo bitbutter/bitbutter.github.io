@@ -103,7 +103,7 @@ section.info > h1{
 <meta property="og:title" content="Sociocracy Org Chart Maker">
 <meta property="og:description" content="A rough and simple tool for generating sociogracy org charts.">
 <meta property="og:url" content="https://bitbutter.github.io/sociocracy/">
-<meta property="og:image" content="https://i.lensdump.com/i/AvjeU9.png">
+<meta property="og:image" content="https://i.lensdump.com/i/AvjFOr.png">
 
 </head>
 
@@ -322,9 +322,9 @@ section.info > h1{
                   .enter().append("marker")
                     .attr("id", function(d) { return d; })
                     .attr("viewBox", "0 -5 10 10")
-                    .attr("refX", 10)
+                    .attr("refX", 5)
                     .attr("refY", 0)
-                    .attr("color", "red")
+                    .attr("fill","#666")
                 
                     .attr("markerWidth", 6)
                     .attr("markerHeight", 6)
@@ -337,8 +337,9 @@ section.info > h1{
                   .enter().append("marker")
                     .attr("id", function(d) { return d; })
                     .attr("viewBox", "0 -5 10 10")
-                    .attr("refX", 0)
+                    .attr("refX", 5)
                     .attr("refY", 0)
+                    .attr("fill","#666")
                     .attr("markerWidth", 6)
                     .attr("markerHeight", 6)
                     .attr("orient", "auto")
