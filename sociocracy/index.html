@@ -85,6 +85,11 @@ section.info > h1{
 
     margin-top:0px;
 }
+.ps{
+    font-size: 0.7em;
+    line-height: 1.7em;
+
+}
 </style>
 <script src="d3.min.js"></script>
 <script src="d3-save-svg-min.js"></script>
@@ -112,7 +117,8 @@ section.info > h1{
               </ul>
             <p>The top field describes the nodes (circles). You can ignore the x and y properties.</p>
             <p>The lower field describes the links between the circles. The "type" property allows you to specify whether the link is "double" (delegate plus leader) or single. The "source" and "target" properties need to match existing "id" values in the top field.</p>
-          </section>
+            <p class="ps">Works as intended in Chrome 70.0.3538.102. No guarantees about any other browser. Uses the <a href="https://d3js.org">D3 library</a>. I hacked this together because I couldn't find a tool to speed up making/modifying the circle diagrams for <a href="https://www.sociocracyforall.org/sociocracy/">sociocratic</a> organisations.</p>
+        </section>
         <script>
                 var nodesObj;
                 var linksObj;
