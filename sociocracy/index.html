@@ -146,13 +146,13 @@ section.info > h1{
 
                 
                 // Setup initial data
+                
                 nodesObj = [
-                    {"id": "Mission Circle", "radius": 50, x:0,y:0},
-                    {"id": "School Circle", "radius": 100,x:0,y:0},
-                    {"id": "Parents' Circle", "radius": 70,x:0,y:0},
-                    {"id": "Staff Circle", "radius": 50,x:0,y:0},
-                    {"id": "Mediation Circle", "radius": 75,x:0,y:0}
-                  ];
+                    {"id":"Mission Circle","radius":50,"x":429,"y":272},
+                    {"id":"School Circle","radius":100,"x":334,"y":428},
+                    {"id":"Parents' Circle","radius":70,"x":356,"y":132},
+                    {"id":"Staff Circle","radius":50,"x":504,"y":148},
+                    {"id":"Mediation Circle","radius":75,"x":131,"y":352}];
 
                 linksObj = [
                     { "source": "Mission Circle", "target": "School Circle", "type": "double" },
@@ -168,19 +168,26 @@ section.info > h1{
                 updateLinksTextArea(linksObj);
                 // Force simulation
                 
-                const forceX = d3.forceX(width / 2).strength(1)
-                const forceY = d3.forceY(height / 2).strength(1)
                 
-                simulation = d3.forceSimulation()
-                  .force('charge', d3.forceManyBody().strength(-50))
-                  .force('center', d3.forceCenter(width / 2, height / 2))
-                  .force('collision', d3.forceCollide().radius(function(d) {return d.radius}))
-                  .force("link", d3.forceLink().id(function(d) { return d.id; }).distance(180))
-                  .on("tick", ticked);
+                // const forceX = d3.forceX(width / 2).strength(1)
+                // const forceY = d3.forceY(height / 2).strength(1)
+                
+                // simulation = d3.forceSimulation()
+                //   .force('charge', d3.forceManyBody().strength(-50))
+                //   .force('center', d3.forceCenter(width / 2, height / 2))
+                //   .force('collision', d3.forceCollide().radius(function(d) {return d.radius}))
+                //   .force("link", d3.forceLink().id(function(d) { return d.id; }).distance(180))
+                //   .on("tick", ticked);
 
-                simulation.nodes(nodesObj);
-                simulation.force("link").links(linksObj);
-         
+                // simulation.nodes(nodesObj);
+                // simulation.force("link").links(linksObj);
+
+                linksObj.forEach(function(l) {
+                    const sIndex = nodesObj.findIndex(n => n.id === l.source);
+                    const tIndex = nodesObj.findIndex(n => n.id === l.target);
+                    l.source=nodesObj[sIndex];
+                    l.target=nodesObj[tIndex];
+                });
 
                 // draw svg shapes
 
@@ -218,6 +225,8 @@ section.info > h1{
                         .attr("alignment-baseline","middle")
                         .attr("text-anchor","middle");
                 
+                ticked();
+
                 // Drag callbacks
                 
                 function fontSize(s,rad){
@@ -255,9 +264,19 @@ section.info > h1{
                       // Length of path from center of source node to center of target node
                       pathLength = Math.sqrt((diffX * diffX) + (diffY * diffY));
           
+                    if(isNaN(pathLength)){
+                        pathLength=0;
+                    }
                       // if we define dx=x2-x1 and dy=y2-y1, then the normals are (-dy, dx) and (dy, -dx).
                       var normalX = (-1*diffY) / pathLength;
                       var normalY = diffX / pathLength;
+
+                      if(isNaN(normalX)){
+                        normalX=1;
+                      }
+                      if(isNaN(normalY)){
+                        normalY=1;
+                      }
           
                       var offsetAmount=5.0;
                       xPerpOffset=normalX*offsetAmount;
@@ -269,9 +288,18 @@ section.info > h1{
                       offsetYt = (diffY * (d.target.radius + linkPadding)) / pathLength;
                       offsetXs = (diffX * (d.source.radius + linkPadding)) / pathLength;
                       offsetYs = (diffY * (d.source.radius + linkPadding)) / pathLength;
-                      var oStringd = "M " + d.source.x+ ",\n" + d.source.y + "\nL" + (d.target.x - offsetXt) + ",\n" + (d.target.y - offsetYt);
-                      var dStringd = "\n\n M " + (d.source.x+xPerpOffset+offsetXs)+ ",\n" + d.source.y+yPerpOffset+offsetYs + "\nL" + ((d.target.x+xPerpOffset) - offsetXt) + ",\n" + ((d.target.y+yPerpOffset) - offsetYt);
-          
+                      if(isNaN(offsetXt)){
+                        offsetXt=0;
+                      }
+                      if(isNaN(offsetYt)){
+                        offsetYt=0;
+                      }
+                      if(isNaN(offsetXs)){
+                        offsetXs=0;
+                      }
+                      if(isNaN(offsetYs)){
+                        offsetYs=0;
+                      }
                       var dString="";
                       if (d.type=="single"){
                           // draw a single link
@@ -297,7 +325,7 @@ section.info > h1{
                     nodesObj = JSON.parse(d3.select("#jsontextarea").property('value')); // this is how you parse a string into JSON 
                     linksObj = JSON.parse(d3.select("#jsontextarea2").property('value')); // this is how you parse a string into JSON 
                     svg.selectAll("*").remove();
-                    simulation.stop();
+                    //simulation.stop();
                     doIt(true);
                     } catch (ex) {
                     console.error(ex);
