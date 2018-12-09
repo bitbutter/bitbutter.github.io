@@ -43,8 +43,27 @@ circle.node {
   stroke: #fff;
   stroke-width: 1.5px;
 }
-button#generate{
+
+#leftbuttongrid{
+    grid-column: 1;
+  grid-row: 1;
+    display: grid;
+  row-gap:10px;
+  column-gap:10px;
+  grid-template-columns: 1fr 1fr 1fr;  
+}
+button#loadfromjson{
   grid-column: 1;
+  grid-row: 1;
+  align-self: stretch;
+}
+button#saveasjson{
+  grid-column: 2;
+  grid-row: 1;
+  align-self: stretch;
+}
+button#generate{
+  grid-column: 3;
   grid-row: 1;
   align-self: stretch;
 }
@@ -61,8 +80,7 @@ form#jsonform{
   display: grid;
   row-gap:10px;
   column-gap:10px;
-
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 2fr 1fr;
   grid-template-rows: 1fr 1fr;
 }
 textarea#nodesTextarea, textarea#linksTextarea, textarea#colorsTextarea{
@@ -84,25 +102,13 @@ textarea#colorsTextarea{
   grid-column: 2 / 3;
   grid-row: 1;
 }
+
 ul#colorPickers{
   grid-column: 2 / 3;
   grid-row: 1;
   align-items: flex-start;
   padding:0px;
   margin:0px;
-}
-ul#colorPickers li{
-    list-style: none;
-    padding-bottom:4px;
-    margin-bottom:10px;
-}
-ul#colorPickers li label{
-    margin-left:10px;
-    font-size: 0.7em;
-    color:#999;
-    display:inline-flex;
-    margin-right:10px;
-    margin-left:0px;
 }
 svg {
     border-width:0px;
@@ -127,8 +133,35 @@ section.info > h1{
     line-height: 1.7em;
 
 }
+ul#colorPickers{
+  grid-column: 2 / 3;
+  grid-row: 1;
+  padding:0px;
+  margin:0px;
+  display:flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+ul#colorPickers li{
+    list-style: none;
+    padding:0px;
+    margin:0px;
+    /* align-self: stretch; */
+}
+ul#colorPickers li label{
+    margin-left:10px;
+    font-size: 0.7em;
+    color:#999;
+    margin-right:10px;
+    margin-left:0px;
+}
 input[type=color]{
-    display:inline-flex;
+    width: 60%;
+    height: 30px;
+    margin-bottom:10px;
+}
+button:disabled{
+    color:rgb(177, 177, 177);
 }
 </style>
 <script src="d3.min.js"></script>
@@ -147,20 +180,24 @@ input[type=color]{
 </head>
 
 <body>
-        <button id="generate">Save as SVG</button>
+        <div id="leftbuttongrid">
+            <button id="loadfromjson" disabled>Open JSON</button>
+            <button id="saveasjson" disabled>Save JSON</button>
+            <button id="generate">Export SVG</button>
+        </div>
         <button id="redraw">Redraw</button>
         <form id="jsonform">
             <textarea id="nodesTextarea"></textarea>
             <!-- <textarea id="colorsTextarea"></textarea> -->
             <ul id="colorPickers">
-                <li><label for="col0">0</label><input type="color" id="col0" name="col0" value="#999"></li>
-                <li><label for="col1">1</label><input type="color" id="col1" name="col1" value="#999"></li>
-                <li><label for="col2">2</label><input type="color" id="col2" name="col2" value="#999"></li>
-                <li><label for="col3">3</label><input type="color" id="col3" name="col3" value="#999"></li>
-                <li><label for="col4">4</label><input type="color" id="col4" name="col4" value="#999"></li>
-                <li><label for="col5">5</label><input type="color" id="col5" name="col5" value="#999"></li>
-                <li><label for="col6">6</label><input type="color" id="col6" name="col6" value="#999"></li>
-                <li><label for="col7">7</label><input type="color" id="col7" name="col7" value="#999"></li>
+                <li><label for="col0">0</label><input class="colpicker" type="color" id="col0" name="col0" value="#999"></li>
+                <li><label for="col1">1</label><input class="colpicker" type="color" id="col1" name="col1" value="#999"></li>
+                <li><label for="col2">2</label><input class="colpicker" type="color" id="col2" name="col2" value="#999"></li>
+                <li><label for="col3">3</label><input class="colpicker" type="color" id="col3" name="col3" value="#999"></li>
+                <li><label for="col4">4</label><input class="colpicker" type="color" id="col4" name="col4" value="#999"></li>
+                <li><label for="col5">5</label><input class="colpicker" type="color" id="col5" name="col5" value="#999"></li>
+                <li><label for="col6">6</label><input class="colpicker" type="color" id="col6" name="col6" value="#999"></li>
+                <li><label for="col7">7</label><input class="colpicker" type="color" id="col7" name="col7" value="#999"></li>
             </ul>
             <textarea id="linksTextarea"></textarea>
         </form>
@@ -277,7 +314,8 @@ input[type=color]{
                         .attr("text-anchor","middle");
                 
                 ticked();
-
+                
+                d3.selectAll(".colpicker").on("change",function(){redraw()});
                 // Drag callbacks
                 
                 function fontSize(s,rad){
@@ -372,20 +410,17 @@ input[type=color]{
                   d3_save_svg.save(d3.select('svg').node(), config);
                 });
                 d3.select('button#redraw').on('click', function() {
+                    redraw();
+                });
+                function redraw(){
                     try {
                     updateObjectFromTextArea();
-                    //nodesArray = JSON.parse(d3.select("#nodesTextarea").property('value')); // this is how you parse a string into JSON 
-                    //linksArray = JSON.parse(d3.select("#linksTextarea").property('value')); // this is how you parse a string into JSON 
-                    //colorsArray = JSON.parse(d3.select("#colorsTextarea").property('value')); // this is how you parse a string into JSON 
-
                     svg.selectAll("*").remove();
-                    //simulation.stop();
                     doIt(true);
                     } catch (ex) {
                     console.error(ex);
                     }
-                });
-                
+                }
                 function updateObjectFromTextArea(){
 
                   var s = d3.select("#nodesTextarea").property('value')
