@@ -182,8 +182,12 @@ button:disabled{
 
 <body>
         <div id="leftbuttongrid">
-            <button id="loadfromjson" disabled>Open JSON</button>
-            <button id="saveasjson" disabled>Save JSON</button>
+            <form id="jsonFile" name="jsonFile" enctype="multipart/form-data" method="post">
+                    <input type="file" id="files" name="files[]" multiple />
+
+                   <!-- <input type='button' id='btnLoad' value='Load' onclick='loadFile();'> -->
+              </form>
+            <button id="saveasjson">Save JSON</button>
             <button id="generate">Export SVG</button>
         </div>
         <button id="redraw">Redraw</button>
@@ -191,14 +195,14 @@ button:disabled{
             <textarea id="nodesTextarea"></textarea>
             <!-- <textarea id="colorsTextarea"></textarea> -->
             <ul id="colorPickers">
-                <li><label for="col0">0</label><input class="colpicker" type="color" id="col0" name="col0" value="#999"></li>
-                <li><label for="col1">1</label><input class="colpicker" type="color" id="col1" name="col1" value="#999"></li>
-                <li><label for="col2">2</label><input class="colpicker" type="color" id="col2" name="col2" value="#999"></li>
-                <li><label for="col3">3</label><input class="colpicker" type="color" id="col3" name="col3" value="#999"></li>
-                <li><label for="col4">4</label><input class="colpicker" type="color" id="col4" name="col4" value="#999"></li>
-                <li><label for="col5">5</label><input class="colpicker" type="color" id="col5" name="col5" value="#999"></li>
-                <li><label for="col6">6</label><input class="colpicker" type="color" id="col6" name="col6" value="#999"></li>
-                <li><label for="col7">7</label><input class="colpicker" type="color" id="col7" name="col7" value="#999"></li>
+                <li><label for="col0">0</label><input class="colpicker" type="color" id="col0" name="col0" value="#999999"></li>
+                <li><label for="col1">1</label><input class="colpicker" type="color" id="col1" name="col1" value="#999999"></li>
+                <li><label for="col2">2</label><input class="colpicker" type="color" id="col2" name="col2" value="#999999"></li>
+                <li><label for="col3">3</label><input class="colpicker" type="color" id="col3" name="col3" value="#999999"></li>
+                <li><label for="col4">4</label><input class="colpicker" type="color" id="col4" name="col4" value="#999999"></li>
+                <li><label for="col5">5</label><input class="colpicker" type="color" id="col5" name="col5" value="#999999"></li>
+                <li><label for="col6">6</label><input class="colpicker" type="color" id="col6" name="col6" value="#999999"></li>
+                <li><label for="col7">7</label><input class="colpicker" type="color" id="col7" name="col7" value="#999999"></li>
             </ul>
             <textarea id="linksTextarea"></textarea>
         </form>
@@ -215,60 +219,46 @@ button:disabled{
             <p class="ps">Works as intended in Chrome 70.0.3538.102. No guarantees about any other browser. Uses the <a href="https://d3js.org">D3 library</a>. I hacked this together because I couldn't find a tool to speed up making/modifying the circle diagrams for <a href="https://www.sociocracyforall.org/sociocracy/">sociocratic</a> organisations. My email: info at redshift media dot com.</p>
         </section>
         <script>
-                var nodesArray;
-                var linksArray;
-                // Setup SVG
-                var width = 600, height = 600;
-                var svg = d3.select("body").append("svg")
-                    .attr("width", width)
-                    .attr("height", height);
-                
-                // Setup initial data
-                
-                nodesArray = [
-                    {"id":"Mission Circle","radius":50,"x":429,"y":272,"color":0},
-                    {"id":"School Circle","radius":100,"x":334,"y":428,"color":1},
-                    {"id":"Parents' Circle","radius":70,"x":356,"y":132,"color":2},
-                    {"id":"Staff Circle","radius":50,"x":504,"y":148,"color":0},
-                    {"id":"Mediation Circle","radius":75,"x":131,"y":352,"color":0}
-                ];
-                linksArray = [
-                    { "source": "Mission Circle", "target": "School Circle", "type": "double" },
-                    { "source": "Mission Circle", "target": "Parents' Circle", "type": "double" },
-                    { "source": "Mission Circle", "target": "Staff Circle", "type": "single" },
-                    { "source": "School Circle", "target": "Mediation Circle", "type": "double" }
-                ];
-                colorsArray = [
-                    { "id": "#FB8EA5"},
-                    { "id": "#8EFFAA"},
-                    { "id": "#CCC7FF"},
-                    { "id": "#BDBDBD"},
-                    { "id": "#BDBDBD"},
-                    { "id": "#BDBDBD"},
-                    { "id": "#BDBDBD"},
-                    { "id": "#BDBDBD"}
-                ];
+            var nodesArray;
+            var linksArray;
+            // Setup SVG
+            var width = 600, height = 600;
+            var svg = d3.select("body").append("svg")
+                .attr("width", width)
+                .attr("height", height);
+            
+            // Setup initial data
+            
+            nodesArray = [
+                {"id":"Mission Circle","radius":50,"x":429,"y":272,"color":0},
+                {"id":"School Circle","radius":100,"x":334,"y":428,"color":1},
+                {"id":"Parents' Circle","radius":70,"x":356,"y":132,"color":2},
+                {"id":"Staff Circle","radius":50,"x":504,"y":148,"color":0},
+                {"id":"Mediation Circle","radius":75,"x":131,"y":352,"color":0}
+            ];
+            linksArray = [
+                { "source": "Mission Circle", "target": "School Circle", "type": "double" },
+                { "source": "Mission Circle", "target": "Parents' Circle", "type": "double" },
+                { "source": "Mission Circle", "target": "Staff Circle", "type": "single" },
+                { "source": "School Circle", "target": "Mediation Circle", "type": "double" }
+            ];
+            colorsArray = [
+                { "id": "#FB8EA5"},
+                { "id": "#8EFFAA"},
+                { "id": "#CCC7FF"},
+                { "id": "#BDBDBD"},
+                { "id": "#BDBDBD"},
+                { "id": "#BDBDBD"},
+                { "id": "#BDBDBD"},
+                { "id": "#BDBDBD"}
+            ];
 
-                var simulation;
+            var simulation;
 
-                function doIt(){
+            function doIt(){
                 svgPrepare();
                 updateTextAreaFromObjects();
                 updateLinksTextArea(linksArray);
-                // Force simulation
-                
-                // const forceX = d3.forceX(width / 2).strength(1)
-                // const forceY = d3.forceY(height / 2).strength(1)
-                
-                // simulation = d3.forceSimulation()
-                //   .force('charge', d3.forceManyBody().strength(-50))
-                //   .force('center', d3.forceCenter(width / 2, height / 2))
-                //   .force('collision', d3.forceCollide().radius(function(d) {return d.radius}))
-                //   .force("link", d3.forceLink().id(function(d) { return d.id; }).distance(180))
-                //   .on("tick", ticked);
-
-                // simulation.nodes(nodesObj);
-                // simulation.force("link").links(linksObj);
 
                 // Replace link source strings with refs to node objects
                 linksArray.forEach(function(l) {
@@ -284,35 +274,35 @@ button:disabled{
                     node = d3.select("#nodes").selectAll(".node"),
                     text = d3.select("#text").selectAll("text");
                 
-                  link = link
+                link = link
                     .data(linksArray)
                     .enter().append("path")
-                      .attr("class", "link")
-                      .attr("marker-end", "url(#endArrow)")
-                      .style("stroke-linecap", "round");  // stroke-linecap type
+                        .attr("class", "link")
+                        .attr("marker-end", "url(#endArrow)")
+                        .style("stroke-linecap", "round");  // stroke-linecap type
 
-                  node = node
-                    .data(nodesArray)
-                    .enter().append("circle")
-                      .attr("class", "node")
-                      .attr("r", function(d) { return d.radius; })
-                      .attr("fill",function(d) { return colorsArray[d.color].id; })
-                      .call(d3.drag()
-                        .on("start", dragstarted)
-                        .on("drag", dragged)
-                        .on("end", dragended));
+                node = node
+                .data(nodesArray)
+                .enter().append("circle")
+                    .attr("class", "node")
+                    .attr("r", function(d) { return d.radius; })
+                    .attr("fill",function(d) { return colorsArray[d.color].id; })
+                    .call(d3.drag()
+                    .on("start", dragstarted)
+                    .on("drag", dragged)
+                    .on("end", dragended));
                     
-                    text = text
-                        .data(nodesArray)
-                        .enter()
-                        .append("text")
-                        .attr("x", function(d) { return d.x; })
-                        .attr("y", function(d) { return d.y; })
-                        .text( function (d) { return d.id; })
-                        .attr("font-family", "sans-serif")
-                        .attr("font-size", function(d){return fontSize(d.id,d.radius);})
-                        .attr("alignment-baseline","middle")
-                        .attr("text-anchor","middle");
+                text = text
+                    .data(nodesArray)
+                    .enter()
+                    .append("text")
+                    .attr("x", function(d) { return d.x; })
+                    .attr("y", function(d) { return d.y; })
+                    .text( function (d) { return d.id; })
+                    .attr("font-family", "sans-serif")
+                    .attr("font-size", function(d){return fontSize(d.id,d.radius);})
+                    .attr("alignment-baseline","middle")
+                    .attr("text-anchor","middle");
                 
                 ticked();
                 
@@ -323,9 +313,9 @@ button:disabled{
                   var n = (250 / s.length)*(rad/100);
                   n = Math.max(n, 9);
                   n = Math.min(n,20);
-
                   return ""+n+"px";
                 }
+
                 function dragstarted(d) {
                   d3.select(this).raise().classed("active", true);
                 }
@@ -341,163 +331,245 @@ button:disabled{
                 }
                 
                 function ticked() {
+                    node.attr("cx", function(d) { return d.x; })
+                        .attr("cy", function(d) { return d.y; });
+                    text.attr("x", function(d) { return d.x; })
+                        .attr("y", function(d) { return d.y; });
+                    link.attr("d", function(d) {
+                        // Total difference in x and y from source to target
+                        diffX = parseFloat(d.target.x - d.source.x);
+                        diffY = parseFloat(d.target.y - d.source.y);
+            
+                        // Length of path from center of source node to center of target node
+                        pathLength = Math.sqrt((diffX * diffX) + (diffY * diffY));
+          
+                        if(isNaN(pathLength)){
+                            pathLength=0;
+                        }
+                        // if we define dx=x2-x1 and dy=y2-y1, then the normals are (-dy, dx) and (dy, -dx).
+                        var normalX = (-1*diffY) / pathLength;
+                        var normalY = diffX / pathLength;
 
-                  node.attr("cx", function(d) { return d.x; })
-                      .attr("cy", function(d) { return d.y; });
-                  text.attr("x", function(d) { return d.x; })
-                      .attr("y", function(d) { return d.y; });
-                  link.attr("d", function(d) {
-                      // Total difference in x and y from source to target
-                      diffX = parseFloat(d.target.x - d.source.x);
-                      diffY = parseFloat(d.target.y - d.source.y);
+                        if(isNaN(normalX)){
+                            normalX=1;
+                        }
+                        if(isNaN(normalY)){
+                            normalY=1;
+                        }
           
-                      // Length of path from center of source node to center of target node
-                      pathLength = Math.sqrt((diffX * diffX) + (diffY * diffY));
-          
-                    if(isNaN(pathLength)){
-                        pathLength=0;
-                    }
-                      // if we define dx=x2-x1 and dy=y2-y1, then the normals are (-dy, dx) and (dy, -dx).
-                      var normalX = (-1*diffY) / pathLength;
-                      var normalY = diffX / pathLength;
-
-                      if(isNaN(normalX)){
-                        normalX=1;
-                      }
-                      if(isNaN(normalY)){
-                        normalY=1;
-                      }
-          
-                      var offsetAmount=5.0;
-                      xPerpOffset=normalX*offsetAmount;
-                      yPerpOffset=normalY*offsetAmount;
-          
-                      var linkPadding = 5;
-                      // x and y distances from center to outside edge of target node
-                      offsetXt = (diffX * (d.target.radius + linkPadding)) / pathLength;
-                      offsetYt = (diffY * (d.target.radius + linkPadding)) / pathLength;
-                      offsetXs = (diffX * (d.source.radius + linkPadding)) / pathLength;
-                      offsetYs = (diffY * (d.source.radius + linkPadding)) / pathLength;
-                      if(isNaN(offsetXt)){
-                        offsetXt=0;
-                      }
-                      if(isNaN(offsetYt)){
-                        offsetYt=0;
-                      }
-                      if(isNaN(offsetXs)){
-                        offsetXs=0;
-                      }
-                      if(isNaN(offsetYs)){
-                        offsetYs=0;
-                      }
-                      var dString="";
-                      if (d.type=="single"){
-                          // draw a single link
-                          dString = "M" + (d.source.x+offsetXs)+ "," + (d.source.y+offsetYs) + "L" + ((d.target.x) - offsetXt) + "," + ((d.target.y) - offsetYt);
-                      } else {
-                          // draw a double link
-                          dString = "M" + (d.source.x+xPerpOffset+offsetXs)+ "," + (d.source.y+yPerpOffset+offsetYs) + "L" + ((d.target.x+xPerpOffset) - offsetXt) + "," + ((d.target.y+yPerpOffset) - offsetYt);
-                          dString += "M" + (d.source.x-xPerpOffset+offsetXs)+ "," + (d.source.y-yPerpOffset+offsetYs) + "L" + ((d.target.x-xPerpOffset) - offsetXt) + "," + ((d.target.y-yPerpOffset) - offsetYt);
-                      }
-                      // alert (oStringd + dStringd);
-                      return dString;
+                        var offsetAmount=5.0;
+                        xPerpOffset=normalX*offsetAmount;
+                        yPerpOffset=normalY*offsetAmount;
+            
+                        var linkPadding = 5;
+                        // x and y distances from center to outside edge of target node
+                        offsetXt = (diffX * (d.target.radius + linkPadding)) / pathLength;
+                        offsetYt = (diffY * (d.target.radius + linkPadding)) / pathLength;
+                        offsetXs = (diffX * (d.source.radius + linkPadding)) / pathLength;
+                        offsetYs = (diffY * (d.source.radius + linkPadding)) / pathLength;
+                        if(isNaN(offsetXt)){
+                            offsetXt=0;
+                        }
+                        if(isNaN(offsetYt)){
+                            offsetYt=0;
+                        }
+                        if(isNaN(offsetXs)){
+                            offsetXs=0;
+                        }
+                        if(isNaN(offsetYs)){
+                            offsetYs=0;
+                        }
+                        var dString="";
+                        if (d.type=="single"){
+                            // draw a single link
+                            dString = "M" + (d.source.x+offsetXs)+ "," + (d.source.y+offsetYs) + "L" + ((d.target.x) - offsetXt) + "," + ((d.target.y) - offsetYt);
+                        } else {
+                            // draw a double link
+                            dString = "M" + (d.source.x+xPerpOffset+offsetXs)+ "," + (d.source.y+yPerpOffset+offsetYs) + "L" + ((d.target.x+xPerpOffset) - offsetXt) + "," + ((d.target.y+yPerpOffset) - offsetYt);
+                            dString += "M" + (d.source.x-xPerpOffset+offsetXs)+ "," + (d.source.y-yPerpOffset+offsetYs) + "L" + ((d.target.x-xPerpOffset) - offsetXt) + "," + ((d.target.y-yPerpOffset) - offsetYt);
+                        }
+                        // alert (oStringd + dStringd);
+                        return dString;
                     }).attr("marker-end", "url(#endArrow)").attr("marker-start", "url(#startArrow)");
                 }
             }
-                d3.select('button#generate').on('click', function() {
-                  var config = {
-                    filename: 'circles',
-                  }
-                  d3_save_svg.save(d3.select('svg').node(), config);
+            // define button events
+            d3.select('button#generate').on('click', function() {
+                var config = {
+                filename: 'circles',
+                }
+                d3_save_svg.save(d3.select('svg').node(), config);
+            });
+            d3.select('button#redraw').on('click', function() {
+                redraw();
+            });
+            d3.select('button#saveasjson').on('click', function() {
+                savetojsonfile();
+            });
+            function savetojsonfile(){
+                var j = JSON.stringify(makejsonobjectforsave(),null,2);
+                var date = new Date();
+                var timestamp = date.getTime();
+                download(j, 'circles-'+timestamp+'.json', 'application/json');
+            }
+            function download(content, fileName, contentType) {
+                var a = document.createElement("a");
+                var file = new Blob([content], {type: contentType});
+                a.href = URL.createObjectURL(file);
+                a.download = fileName;
+                a.click();
+            }
+            function openfromjsonfile(){
+                
+            }
+            function makejsonobjectforsave(){
+                obj={};
+                obj.nodes={};
+                obj.links={};
+                obj.colors={};
+                var i=0;
+                nodesArray.forEach(function(o){
+                    obj.nodes[i]=o;
+                    i++;
                 });
-                d3.select('button#redraw').on('click', function() {
-                    redraw();
+                var i=0;
+                linksArray.forEach(function(o){
+                    obj.links[i]=o;
+                    obj.links[i].source = o.source.id;
+                    obj.links[i].target = o.target.id;
+                    i++;
                 });
-                function redraw(){
-                    try {
-                    updateObjectFromTextArea();
-                    svg.selectAll("*").remove();
-                    doIt(true);
-                    } catch (ex) {
-                    console.error(ex);
+                colorsArray.forEach(function(o){
+                    obj.colors[i]=o;
+                    i++;
+                });
+                var s = JSON.stringify(obj,null,2);
+                // console.log(s);
+                return obj;
+            }
+            function redraw(){
+                try {
+                updateObjectFromTextArea();
+                svg.selectAll("*").remove();
+                doIt(true);
+                } catch (ex) {
+                console.error(ex);
+                }
+            }
+            function updateObjectFromTextArea(){
+
+                var s = d3.select("#nodesTextarea").property('value')
+                nodesArray = JSON.parse(d3.select("#nodesTextarea").property('value')); // this is how you parse a string into JSON 
+                linksArray = JSON.parse(d3.select("#linksTextarea").property('value')); // this is how you parse a string into JSON 
+                
+                var i=0;
+                colorsArray.forEach(function(c){
+                    c.id = d3.select("#col"+i).property("value");
+                    //d3.select("#col"+i).property("value",(c.id));
+                    i++;
+                });
+            }
+            function updateTextAreaFromObjects(){
+                var myJSON = JSON.stringify(nodesArray,replacer,2);
+                d3.select("#nodesTextarea").text(myJSON);
+            //   var myJSON = JSON.stringify(colorsArray,replacer,2);
+            //   d3.select("#colorsTextarea").text(myJSON);
+                var i=0;
+                colorsArray.forEach(function(c){
+                    d3.select("#col"+i).property("value",(c.id));
+                    i++;
+                })
+
+            }
+            function updateLinksTextArea(o){
+                var myJSON = JSON.stringify(o,replacer,2);
+                d3.select("#linksTextarea").text(myJSON);
+            }
+
+            function svgPrepare(){
+                var svg = d3.select("svg"),
+                width = +svg.attr("width"),
+                height = +svg.attr("height");
+                var svglinks = svg.append("g").attr("id", "links");
+                var svgnodes = svg.append("g").attr("id", "nodes");
+                var svgtext = svg.append("g").attr("id", "text");
+            
+            // Per-type markers, as they don't inherit styles.
+            svg.append("defs").selectAll("marker")
+                .data(["endArrow"])
+                .enter().append("marker")
+                .attr("id", function(d) { return d; })
+                .attr("viewBox", "0 -5 10 10")
+                .attr("refX", 5)
+                .attr("refY", 0)
+                .attr("fill","#666")
+            
+                .attr("markerWidth", 6)
+                .attr("markerHeight", 6)
+                .attr("orient", "auto")
+                .append("path")
+                .attr("d", "M0,-5L10,0L0,5");
+                
+            svg.append("defs").selectAll("marker")
+                .data(["startArrow"])
+                .enter().append("marker")
+                .attr("id", function(d) { return d; })
+                .attr("viewBox", "0 -5 10 10")
+                .attr("refX", 5)
+                .attr("refY", 0)
+                .attr("fill","#666")
+                .attr("markerWidth", 6)
+                .attr("markerHeight", 6)
+                .attr("orient", "auto")
+                .append("path")
+                .attr("d", "M10,-5L0,0L10,5");
+            }
+
+            function replacer(key,value){
+                if (key=="vx"||key=="vy"||key=="index") return undefined;
+                else if (key=="privateProperty2") return undefined;
+                else return value;
+            }
+                
+        
+        var json;
+
+        function handleFileSelect(evt) {
+            var files = evt.target.files; // FileList object
+
+            // files is a FileList of File objects. List some properties.
+
+        }
+
+        document.getElementById('files').addEventListener('change', handleFileSelect, false);
+
+        function handleFileSelect(evt) {
+            var files = evt.target.files; // FileList object
+
+            // files is a FileList of File objects. List some properties.
+            var output = [];
+            for (var i = 0, f; f = files[i]; i++) {
+                var reader = new FileReader();
+
+                // Closure to capture the file information.
+                reader.onload = (function (theFile) {
+                    return function (e) {
+                        console.log('e readAsText = ', e);
+                        console.log('e readAsText target = ', e.target);
+                        try {
+                            json = JSON.parse(e.target.result);
+                            alert('json global var has been set to parsed json of this file here it is unevaled = \n' + JSON.stringify(json));
+                        } catch (ex) {
+                            alert('ex when trying to parse json = ' + ex);
+                        }
                     }
-                }
-                function updateObjectFromTextArea(){
+                })(f);
+                reader.readAsText(f);
+            }
 
-                  var s = d3.select("#nodesTextarea").property('value')
-                  nodesArray = JSON.parse(d3.select("#nodesTextarea").property('value')); // this is how you parse a string into JSON 
-                  linksArray = JSON.parse(d3.select("#linksTextarea").property('value')); // this is how you parse a string into JSON 
-                  
-                  var i=0;
-                  colorsArray.forEach(function(c){
-                      c.id = d3.select("#col"+i).property("value");
-                      //d3.select("#col"+i).property("value",(c.id));
-                      i++;
-                  });
-                }
-                function updateTextAreaFromObjects(){
-                  var myJSON = JSON.stringify(nodesArray,replacer,2);
-                  d3.select("#nodesTextarea").text(myJSON);
-                //   var myJSON = JSON.stringify(colorsArray,replacer,2);
-                //   d3.select("#colorsTextarea").text(myJSON);
-                  var i=0;
-                  colorsArray.forEach(function(c){
-                      d3.select("#col"+i).property("value",(c.id));
-                      i++;
-                  })
+        }
 
-                }
-                function updateLinksTextArea(o){
-                  var myJSON = JSON.stringify(o,replacer,2);
-                  d3.select("#linksTextarea").text(myJSON);
-                }
-
-                function svgPrepare(){
-                  var svg = d3.select("svg"),
-                    width = +svg.attr("width"),
-                    height = +svg.attr("height");
-                    var svglinks = svg.append("g").attr("id", "links");
-                    var svgnodes = svg.append("g").attr("id", "nodes");
-                    var svgtext = svg.append("g").attr("id", "text");
-                
-                // Per-type markers, as they don't inherit styles.
-                svg.append("defs").selectAll("marker")
-                    .data(["endArrow"])
-                  .enter().append("marker")
-                    .attr("id", function(d) { return d; })
-                    .attr("viewBox", "0 -5 10 10")
-                    .attr("refX", 5)
-                    .attr("refY", 0)
-                    .attr("fill","#666")
-                
-                    .attr("markerWidth", 6)
-                    .attr("markerHeight", 6)
-                    .attr("orient", "auto")
-                  .append("path")
-                    .attr("d", "M0,-5L10,0L0,5");
-                
-                svg.append("defs").selectAll("marker")
-                    .data(["startArrow"])
-                  .enter().append("marker")
-                    .attr("id", function(d) { return d; })
-                    .attr("viewBox", "0 -5 10 10")
-                    .attr("refX", 5)
-                    .attr("refY", 0)
-                    .attr("fill","#666")
-                    .attr("markerWidth", 6)
-                    .attr("markerHeight", 6)
-                    .attr("orient", "auto")
-                  .append("path")
-                  .attr("d", "M10,-5L0,0L10,5");
-                }
-
-                function replacer(key,value)
-                {
-                    if (key=="vx"||key=="vy"||key=="index") return undefined;
-                    else if (key=="privateProperty2") return undefined;
-                    else return value;
-                }
-
-                doIt();
-                </script>
+        document.getElementById('files').addEventListener('change', handleFileSelect, false);
+        doIt();
+    </script>
 </body>
