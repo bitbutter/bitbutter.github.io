@@ -16,7 +16,8 @@
 <style>
 html *
 {
-   color: rgb(77, 77, 77) !important;
+   color: rgb(77, 77, 77);
+    /* !important; */
    font-family: Helvetica, Arial, sans-serif !important;
    
 }
@@ -82,13 +83,32 @@ textarea#linksTextarea{
 textarea#colorsTextarea{
   grid-column: 2 / 3;
   grid-row: 1;
-
+}
+ul#colorPickers{
+  grid-column: 2 / 3;
+  grid-row: 1;
+  align-items: flex-start;
+  padding:0px;
+  margin:0px;
+}
+ul#colorPickers li{
+    list-style: none;
+    padding-bottom:4px;
+    margin-bottom:10px;
+}
+ul#colorPickers li label{
+    margin-left:10px;
+    font-size: 0.7em;
+    color:#999;
+    display:inline-flex;
+    margin-right:10px;
+    margin-left:0px;
 }
 svg {
-border-width:0px;
-background: #fff;
-grid-column: 1 / 2;
-  grid-row: 2 / 2;
+    border-width:0px;
+    background: #fff;
+    grid-column: 1 / 2;
+    grid-row: 2 / 2;
 }
 li {
   margin-bottom:10px;
@@ -106,6 +126,9 @@ section.info > h1{
     font-size: 0.7em;
     line-height: 1.7em;
 
+}
+input[type=color]{
+    display:inline-flex;
 }
 </style>
 <script src="d3.min.js"></script>
@@ -128,17 +151,28 @@ section.info > h1{
         <button id="redraw">Redraw</button>
         <form id="jsonform">
             <textarea id="nodesTextarea"></textarea>
-            <textarea id="colorsTextarea"></textarea>
+            <!-- <textarea id="colorsTextarea"></textarea> -->
+            <ul id="colorPickers">
+                <li><label for="col0">0</label><input type="color" id="col0" name="col0" value="#999"></li>
+                <li><label for="col1">1</label><input type="color" id="col1" name="col1" value="#999"></li>
+                <li><label for="col2">2</label><input type="color" id="col2" name="col2" value="#999"></li>
+                <li><label for="col3">3</label><input type="color" id="col3" name="col3" value="#999"></li>
+                <li><label for="col4">4</label><input type="color" id="col4" name="col4" value="#999"></li>
+                <li><label for="col5">5</label><input type="color" id="col5" name="col5" value="#999"></li>
+                <li><label for="col6">6</label><input type="color" id="col6" name="col6" value="#999"></li>
+                <li><label for="col7">7</label><input type="color" id="col7" name="col7" value="#999"></li>
+            </ul>
             <textarea id="linksTextarea"></textarea>
         </form>
         <section class="info">
             <h1>Sociocracy Org Chart Maker</h1>
             <ul>
-              <li>Edit the JSON objects in the two text fields. Click 'Redraw' when done.</li>
+              <li>Edit the JSON objects in the text fields. Click 'Redraw' when done.</li>
               <li>Drag the circles around to your satisfaction.</li>
               <li>Click 'Save as SVG' to export as an SVG image; for further editing in a vector graphics app, or for direct use online.</li>
               </ul>
             <p>The top field describes the nodes (circles). You can ignore the x and y properties.</p>
+            <p>The second field describes the colors to be used for the circles. </p>
             <p>The lower field describes the links between the circles. The "type" property allows you to specify whether the link is "double" (delegate plus leader) or single. The "source" and "target" properties need to match existing "id" values in the top field.</p>
             <p class="ps">Works as intended in Chrome 70.0.3538.102. No guarantees about any other browser. Uses the <a href="https://d3js.org">D3 library</a>. I hacked this together because I couldn't find a tool to speed up making/modifying the circle diagrams for <a href="https://www.sociocracyforall.org/sociocracy/">sociocratic</a> organisations. My email: info at redshift media dot com.</p>
         </section>
@@ -167,9 +201,9 @@ section.info > h1{
                     { "source": "School Circle", "target": "Mediation Circle", "type": "double" }
                 ];
                 colorsArray = [
-                    { "id": "#f00"},
-                    { "id": "#ff0"},
-                    { "id": "#0ff"}
+                    { "id": "#f00000"},
+                    { "id": "#f0f000"},
+                    { "id": "#00f0f0"}
                 ];
 
                 var simulation;
@@ -334,9 +368,10 @@ section.info > h1{
                 });
                 d3.select('button#redraw').on('click', function() {
                     try {
-                    nodesArray = JSON.parse(d3.select("#nodesTextarea").property('value')); // this is how you parse a string into JSON 
-                    linksArray = JSON.parse(d3.select("#linksTextarea").property('value')); // this is how you parse a string into JSON 
-                    colorsArray = JSON.parse(d3.select("#colorsTextarea").property('value')); // this is how you parse a string into JSON 
+                    updateObjectFromTextArea();
+                    //nodesArray = JSON.parse(d3.select("#nodesTextarea").property('value')); // this is how you parse a string into JSON 
+                    //linksArray = JSON.parse(d3.select("#linksTextarea").property('value')); // this is how you parse a string into JSON 
+                    //colorsArray = JSON.parse(d3.select("#colorsTextarea").property('value')); // this is how you parse a string into JSON 
 
                     svg.selectAll("*").remove();
                     //simulation.stop();
@@ -351,12 +386,25 @@ section.info > h1{
                   var s = d3.select("#nodesTextarea").property('value')
                   nodesArray = JSON.parse(d3.select("#nodesTextarea").property('value')); // this is how you parse a string into JSON 
                   linksArray = JSON.parse(d3.select("#linksTextarea").property('value')); // this is how you parse a string into JSON 
+                  
+                  var i=0;
+                  colorsArray.forEach(function(c){
+                      c.id = d3.select("#col"+i).property("value");
+                      //d3.select("#col"+i).property("value",(c.id));
+                      i++;
+                  });
                 }
                 function updateTextAreaFromObjects(){
                   var myJSON = JSON.stringify(nodesArray,replacer,2);
                   d3.select("#nodesTextarea").text(myJSON);
-                  var myJSON = JSON.stringify(colorsArray,replacer,2);
-                  d3.select("#colorsTextarea").text(myJSON);
+                //   var myJSON = JSON.stringify(colorsArray,replacer,2);
+                //   d3.select("#colorsTextarea").text(myJSON);
+                  var i=0;
+                  colorsArray.forEach(function(c){
+                      d3.select("#col"+i).property("value",(c.id));
+                      i++;
+                  })
+
                 }
                 function updateLinksTextArea(o){
                   var myJSON = JSON.stringify(o,replacer,2);
