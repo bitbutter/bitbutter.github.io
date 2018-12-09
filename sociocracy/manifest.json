@@ -1,0 +1,8 @@
+{
+  "short_name": "Sociocracy Org Chart",
+  "name": "Sociocracy Org Chart Maker",
+"display":      "standalone", /* Could be "fullscreen", "standalone", "minimal-ui", or "browser" */
+  "orientation": "landscape",
+  "start_url": "index.html",
+  "display": "fullscreen",
+}
