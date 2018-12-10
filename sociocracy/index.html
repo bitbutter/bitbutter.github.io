@@ -73,6 +73,36 @@ button#redraw{
   grid-row: 1;
   align-self: stretch;
 }
+#files{
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+#files + label {
+    /* font-size: 1.25em; */
+    /* font-weight: 700; */
+    /* color: white; */
+    /* background-color: black; */
+    display:block;
+    -webkit-appearance: button;
+    grid-column: 1;
+    grid-row: 1;
+    align-self:stretch;
+    justify-self:stretch;
+    border-color: rgb(216, 216, 216) rgb(209, 209, 209) rgb(186, 186, 186);
+    border-style: solid;
+    border-width: 1px;
+    padding: 1px 7px 2px;
+    font-size: 100%;
+    line-height: 2.8;
+    text-align: center;
+    height:45px;
+    /* margin: 0; */
+    /* height:100%; */
+}
 
 form#jsonform{
   grid-column: 2;
@@ -164,6 +194,7 @@ input[type=color]{
 button:disabled{
     color:rgb(177, 177, 177);
 }
+
 </style>
 <script src="d3.min.js"></script>
 <script src="d3-save-svg-min.js"></script>
@@ -183,8 +214,8 @@ button:disabled{
 <body>
         <div id="leftbuttongrid">
             <form id="jsonFile" name="jsonFile" enctype="multipart/form-data" method="post">
-                    <input type="file" id="files" name="files[]" multiple />
-
+                    <input type="file" id="files" name="files" multiple />
+                    <label for="files">Open from JSON</label>
                    <!-- <input type='button' id='btnLoad' value='Load' onclick='loadFile();'> -->
               </form>
             <button id="saveasjson">Save JSON</button>
@@ -259,14 +290,8 @@ button:disabled{
                 svgPrepare();
                 updateTextAreaFromObjects();
                 updateLinksTextArea(linksArray);
-
-                // Replace link source strings with refs to node objects
-                linksArray.forEach(function(l) {
-                    const sIndex = nodesArray.findIndex(n => n.id === l.source);
-                    const tIndex = nodesArray.findIndex(n => n.id === l.target);
-                    l.source=nodesArray[sIndex];
-                    l.target=nodesArray[tIndex];
-                });
+                linkrefstonodeobjects();
+                
 
                 // draw svg shapes
 
@@ -449,11 +474,11 @@ button:disabled{
             }
             function redraw(){
                 try {
-                updateObjectFromTextArea();
-                svg.selectAll("*").remove();
-                doIt(true);
+                    updateObjectFromTextArea();
+                    svg.selectAll("*").remove();
+                    doIt(true);
                 } catch (ex) {
-                console.error(ex);
+                    console.error(ex);
                 }
             }
             function updateObjectFromTextArea(){
@@ -534,13 +559,6 @@ button:disabled{
         
         var json;
 
-        function handleFileSelect(evt) {
-            var files = evt.target.files; // FileList object
-
-            // files is a FileList of File objects. List some properties.
-
-        }
-
         document.getElementById('files').addEventListener('change', handleFileSelect, false);
 
         function handleFileSelect(evt) {
@@ -558,7 +576,28 @@ button:disabled{
                         console.log('e readAsText target = ', e.target);
                         try {
                             json = JSON.parse(e.target.result);
-                            alert('json global var has been set to parsed json of this file here it is unevaled = \n' + JSON.stringify(json));
+                            //alert('json global var has been set to parsed json of this file here it is unevaled = \n' + JSON.stringify(json));
+                            //alert(JSON.stringify(json.nodes[0]));
+                            //alert(JSON.stringify(linksArray[0]));
+
+                            nodesArray=[];
+                            Object.entries(json.nodes).forEach(function(i){
+                                nodesArray.push(i[1]);
+                            });
+                            //alert(JSON.stringify(nodesArray[0]));
+                            linksArray=[];
+                            Object.entries(json.links).forEach(function(i){
+                                linksArray.push(i[1]);
+                            });
+                            //alert(JSON.stringify(linksArray[0]));
+                            colorsArray=[];
+                            Object.entries(json.colors).forEach(function(i){
+                                colorsArray.push(i[1]);
+                            });
+                            //alert(JSON.stringify(colorsArray[0]));
+                            updateTextAreaFromObjects();
+                            linkrefstonodeobjects();
+                            redraw();
                         } catch (ex) {
                             alert('ex when trying to parse json = ' + ex);
                         }
@@ -566,9 +605,17 @@ button:disabled{
                 })(f);
                 reader.readAsText(f);
             }
-
+            
         }
-
+        function linkrefstonodeobjects(){
+            // Replace link source strings with refs to node objects
+            linksArray.forEach(function(l) {
+                const sIndex = nodesArray.findIndex(n => n.id === l.source);
+                const tIndex = nodesArray.findIndex(n => n.id === l.target);
+                l.source=nodesArray[sIndex];
+                l.target=nodesArray[tIndex];
+            });
+        }
         document.getElementById('files').addEventListener('change', handleFileSelect, false);
         doIt();
     </script>
