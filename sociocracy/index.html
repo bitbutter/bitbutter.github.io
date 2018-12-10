@@ -35,7 +35,7 @@ body{
 
 .link {
   fill: none;
-  stroke: #666;
+  /* stroke: #666; */
   stroke-width: 1.5px;
 }
 
@@ -188,8 +188,11 @@ ul#colorPickers li label{
 }
 input[type=color]{
     width: 60%;
-    height: 30px;
-    margin-bottom:10px;
+    height: 24px;
+    margin-bottom:4px;
+}
+#col8{
+    margin-top:15px;
 }
 button:disabled{
     color:rgb(177, 177, 177);
@@ -234,6 +237,8 @@ button:disabled{
                 <li><label for="col5">5</label><input class="colpicker" type="color" id="col5" name="col5" value="#999999"></li>
                 <li><label for="col6">6</label><input class="colpicker" type="color" id="col6" name="col6" value="#999999"></li>
                 <li><label for="col7">7</label><input class="colpicker" type="color" id="col7" name="col7" value="#999999"></li>
+                <li><label for="col8">8</label><input class="colpicker" type="color" id="col8" name="col8" value="#555555"></li>
+                <li><label for="col9">9</label><input class="colpicker" type="color" id="col9" name="col9" value="#555555"></li>
             </ul>
             <textarea id="linksTextarea"></textarea>
         </form>
@@ -245,7 +250,8 @@ button:disabled{
                 <li>Click 'Export SVG' to download a file for further editing in a vector graphics app, or for direct use online.</li>
                 <li>Click 'Save JSON' to download your diagram data. Put it somewhere safe if it's important. You can open this file again later to modify your diagram.</li>
               </ul>
-            <p>NB. There's no error checking. Badly formed JSON (or mismatched ids) will make the app fail silently.</p>
+            <p>The last two colors get used for the links and text respectively, but you can use them for your circles too.</p>
+            <p>NB. There's no error checking. Badly formed JSON or mismatched ids will make the app fail silently.</p>
             <p>The link "type" property allows you to specify whether the link is "double" (delegate plus leader) or single. The "source" and "target" properties need to match the circle "id" values in the top field.</p>
             <p class="ps">Works as intended in Chrome 70.0.3538.102. No guarantees about any other browser. Uses the <a href="https://d3js.org">D3 library</a>. I hacked this together because I couldn't find a tool to speed up making/modifying the circle diagrams for <a href="https://www.sociocracyforall.org/sociocracy/">sociocratic</a> organisations. My email: info at redshift media dot com.</p>
         </section>
@@ -277,21 +283,20 @@ button:disabled{
                 { "id": "#FB8EA5"},
                 { "id": "#8EFFAA"},
                 { "id": "#CCC7FF"},
-                { "id": "#BDBDBD"},
-                { "id": "#BDBDBD"},
-                { "id": "#BDBDBD"},
-                { "id": "#BDBDBD"},
-                { "id": "#BDBDBD"}
+                { "id": "#dedede"},
+                { "id": "#dedede"},
+                { "id": "#dedede"},
+                { "id": "#dedede"},
+                { "id": "#dedede"},
+                { "id": "#727272"},
+                { "id": "#000000"}
             ];
 
-            var simulation;
-
             function doIt(){
-                svgPrepare();
                 updateTextAreaFromObjects();
                 updateLinksTextArea(linksArray);
+                svgPrepare();
                 linkrefstonodeobjects();
-                
 
                 // draw svg shapes
 
@@ -327,7 +332,8 @@ button:disabled{
                     .attr("font-family", "sans-serif")
                     .attr("font-size", function(d){return fontSize(d.id,d.radius);})
                     .attr("alignment-baseline","middle")
-                    .attr("text-anchor","middle");
+                    .attr("text-anchor","middle")
+                    .attr("fill", colorsArray[9].id);
                 
                 ticked();
                 
@@ -364,6 +370,7 @@ button:disabled{
                         // Total difference in x and y from source to target
                         diffX = parseFloat(d.target.x - d.source.x);
                         diffY = parseFloat(d.target.y - d.source.y);
+
             
                         // Length of path from center of source node to center of target node
                         pathLength = Math.sqrt((diffX * diffX) + (diffY * diffY));
@@ -371,6 +378,12 @@ button:disabled{
                         if(isNaN(pathLength)){
                             pathLength=0;
                         }
+                        diffXUnit=diffX/pathLength;
+                        diffYUnit=diffY/pathLength;
+                        var arrowadjust=3.5;
+                        var arrowadjustx= diffXUnit*arrowadjust;
+                        var arrowadjusty= diffYUnit*arrowadjust;
+
                         // if we define dx=x2-x1 and dy=y2-y1, then the normals are (-dy, dx) and (dy, -dx).
                         var normalX = (-1*diffY) / pathLength;
                         var normalY = diffX / pathLength;
@@ -407,15 +420,15 @@ button:disabled{
                         var dString="";
                         if (d.type=="single"){
                             // draw a single link
-                            dString = "M" + (d.source.x+offsetXs)+ "," + (d.source.y+offsetYs) + "L" + ((d.target.x) - offsetXt) + "," + ((d.target.y) - offsetYt);
+                            dString = "M" + (d.source.x+offsetXs+arrowadjustx)+ "," + (d.source.y+offsetYs+arrowadjusty) + "L" + ((d.target.x) - offsetXt - arrowadjustx) + "," + ((d.target.y) - offsetYt - arrowadjusty);
                         } else {
                             // draw a double link
-                            dString = "M" + (d.source.x+xPerpOffset+offsetXs)+ "," + (d.source.y+yPerpOffset+offsetYs) + "L" + ((d.target.x+xPerpOffset) - offsetXt) + "," + ((d.target.y+yPerpOffset) - offsetYt);
-                            dString += "M" + (d.source.x-xPerpOffset+offsetXs)+ "," + (d.source.y-yPerpOffset+offsetYs) + "L" + ((d.target.x-xPerpOffset) - offsetXt) + "," + ((d.target.y-yPerpOffset) - offsetYt);
+                            dString = "M" + (d.source.x+xPerpOffset+offsetXs+arrowadjustx)+ "," + (d.source.y+yPerpOffset+offsetYs+arrowadjusty) + "L" + ((d.target.x+xPerpOffset) - offsetXt) + "," + ((d.target.y+yPerpOffset) - offsetYt);
+                            dString += "M" + (d.source.x-xPerpOffset+offsetXs)+ "," + (d.source.y-yPerpOffset+offsetYs) + "L" + ((d.target.x-xPerpOffset) - offsetXt - arrowadjustx) + "," + ((d.target.y-yPerpOffset) - offsetYt - arrowadjusty);
                         }
                         // alert (oStringd + dStringd);
                         return dString;
-                    }).attr("marker-end", "url(#endArrow)").attr("marker-start", "url(#startArrow)");
+                    }).attr("marker-end", "url(#endArrow)").attr("marker-start", "url(#startArrow)").attr("stroke",colorsArray[8].id);
                 }
             }
             // define button events
@@ -521,35 +534,37 @@ button:disabled{
                 var svgnodes = svg.append("g").attr("id", "nodes");
                 var svgtext = svg.append("g").attr("id", "text");
             
-            // Per-type markers, as they don't inherit styles.
-            svg.append("defs").selectAll("marker")
-                .data(["endArrow"])
-                .enter().append("marker")
-                .attr("id", function(d) { return d; })
-                .attr("viewBox", "0 -5 10 10")
-                .attr("refX", 5)
-                .attr("refY", 0)
-                .attr("fill","#666")
-            
-                .attr("markerWidth", 6)
-                .attr("markerHeight", 6)
-                .attr("orient", "auto")
-                .append("path")
-                .attr("d", "M0,-5L10,0L0,5");
-                
-            svg.append("defs").selectAll("marker")
-                .data(["startArrow"])
-                .enter().append("marker")
-                .attr("id", function(d) { return d; })
-                .attr("viewBox", "0 -5 10 10")
-                .attr("refX", 5)
-                .attr("refY", 0)
-                .attr("fill","#666")
-                .attr("markerWidth", 6)
-                .attr("markerHeight", 6)
-                .attr("orient", "auto")
-                .append("path")
-                .attr("d", "M10,-5L0,0L10,5");
+                // Per-type markers, as they don't inherit styles.
+                svg.append("defs").selectAll("marker")
+                    .data(["endArrow"])
+                    .enter().append("marker")
+                    .attr("id", function(d) { return d; })
+                    .attr("viewBox", "0 -5 10 10")
+                    .attr("refX", 5)
+                    .attr("refY", 0)
+                    .attr("fill",colorsArray[8].id)
+                    .attr("fill-opacity","1")
+                    .attr("markerWidth", 6)
+                    .attr("markerHeight", 6)
+                    .attr("orient", "auto")
+                    .append("path")
+                    .attr("d", "M0,-5L10,0L0,5");
+                    
+                svg.append("defs").selectAll("marker")
+                    .data(["startArrow"])
+                    .enter().append("marker")
+                    .attr("id", function(d) { return d; })
+                    .attr("viewBox", "0 -5 10 10")
+                    .attr("refX", 5)
+                    .attr("refY", 0)
+                    .attr("fill",colorsArray[8].id)
+                    .attr("fill-opacity","1")
+
+                    .attr("markerWidth", 6)
+                    .attr("markerHeight", 6)
+                    .attr("orient", "auto")
+                    .append("path")
+                    .attr("d", "M10,-5L0,0L10,5");
             }
 
             function replacer(key,value){
@@ -616,6 +631,7 @@ button:disabled{
                 l.target=nodesArray[tIndex];
             });
         }
+
         document.getElementById('files').addEventListener('change', handleFileSelect, false);
         doIt();
     </script>
