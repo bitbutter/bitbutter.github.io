@@ -240,13 +240,13 @@ button:disabled{
         <section class="info">
             <h1>Sociocracy Org Chart Maker</h1>
             <ul>
-              <li>Edit the JSON objects in the text fields. Click 'Redraw' when done.</li>
-              <li>Drag the circles around to your satisfaction.</li>
-              <li>Click 'Save as SVG' to export as an SVG image; for further editing in a vector graphics app, or for direct use online.</li>
+                <li>Edit the circles and their links using the text fields and color pickers.
+                <li>Click 'Redraw' to update the diagram with your text field changes. Drag the circles around to your satisfaction.</li>
+                <li>Click 'Export SVG' to download a file for further editing in a vector graphics app, or for direct use online.</li>
+                <li>Click 'Save JSON' to download your diagram data. Put it somewhere safe if it's important. You can open this file again later to modify your diagram.</li>
               </ul>
-            <p>The top field describes the nodes (circles). You can ignore the x and y properties.</p>
-            <p>The second field describes the colors to be used for the circles. </p>
-            <p>The lower field describes the links between the circles. The "type" property allows you to specify whether the link is "double" (delegate plus leader) or single. The "source" and "target" properties need to match existing "id" values in the top field.</p>
+            <p>NB. There's no error checking. Badly formed JSON (or mismatched ids) will make the app fail silently.</p>
+            <p>The link "type" property allows you to specify whether the link is "double" (delegate plus leader) or single. The "source" and "target" properties need to match the circle "id" values in the top field.</p>
             <p class="ps">Works as intended in Chrome 70.0.3538.102. No guarantees about any other browser. Uses the <a href="https://d3js.org">D3 library</a>. I hacked this together because I couldn't find a tool to speed up making/modifying the circle diagrams for <a href="https://www.sociocracyforall.org/sociocracy/">sociocratic</a> organisations. My email: info at redshift media dot com.</p>
         </section>
         <script>
