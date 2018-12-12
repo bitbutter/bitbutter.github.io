@@ -18,9 +18,7 @@
 html *
 {
    color: rgb(77, 77, 77);
-    /* !important; */
    font-family: Helvetica, Arial, sans-serif !important;
-   
 }
 body{
     background: #eee;   
@@ -30,17 +28,14 @@ body{
     column-gap:20px;
     row-gap:20px;
     padding:20px; 
-    /* font-family: "Tahoma, Geneva, sans-serif"; */
 }
 
 .link {
   fill: none;
-  /* stroke: #666; */
   stroke-width: 1.5px;
 }
 
 circle.node {
-  /* fill: rgba(236, 234, 234, 1); */
   stroke: #fff;
   stroke-width: 1.5px;
 }
@@ -219,7 +214,6 @@ button:disabled{
             <form id="jsonFile" name="jsonFile" enctype="multipart/form-data" method="post">
                     <input type="file" id="files" name="files" multiple />
                     <label for="files">Open from JSON</label>
-                   <!-- <input type='button' id='btnLoad' value='Load' onclick='loadFile();'> -->
               </form>
             <button id="saveasjson">Save JSON</button>
             <button id="generate">Export SVG</button>
@@ -256,28 +250,24 @@ button:disabled{
             <p class="ps">Works as intended in Chrome 70.0.3538.102. No guarantees about any other browser. Uses the <a href="https://d3js.org">D3 library</a>. I hacked this together because I couldn't find a tool to speed up making/modifying the circle diagrams for <a href="https://www.sociocracyforall.org/sociocracy/">sociocratic</a> organisations. My email: info at redshift media dot com.</p>
         </section>
         <script>
+
+            // create arrays
             var nodesArray;
             var linksArray;
-            // Setup SVG
-            var width = 600, height = 600;
-            var svg = d3.select("body").append("svg")
-                .attr("width", width)
-                .attr("height", height);
-            
+
             // Setup initial data
-            
             nodesArray = [
-                {"id":"Mission Circle","radius":50,"x":429,"y":272,"color":0},
+                {"id":"Mission Circle","radius":50,"x":335,"y":226,"color":0},
                 {"id":"School Circle","radius":100,"x":334,"y":428,"color":1},
-                {"id":"Parents' Circle","radius":70,"x":356,"y":132,"color":2},
-                {"id":"Staff Circle","radius":50,"x":504,"y":148,"color":0},
-                {"id":"Mediation Circle","radius":75,"x":131,"y":352,"color":0}
-            ];
+                {"id":"Parents' Circle","radius":70,"x":202,"y":126,"color":2},
+                {"id":"Staff Circle","radius":50,"x":469,"y":287,"color":0},
+                {"id":"Mediation Circle","radius":75,"x":126,"y":353,"color":0}
+                ];
             linksArray = [
                 { "source": "Mission Circle", "target": "School Circle", "type": "double" },
-                { "source": "Mission Circle", "target": "Parents' Circle", "type": "double" },
-                { "source": "Mission Circle", "target": "Staff Circle", "type": "single" },
-                { "source": "School Circle", "target": "Mediation Circle", "type": "double" }
+                { "source": "School Circle", "target": "Mediation Circle", "type": "single" },
+                { "source": "Staff Circle", "target": "School Circle", "type": "single" },
+                { "source": "Mission Circle", "target": "Parents' Circle", "type": "double" }
             ];
             colorsArray = [
                 { "id": "#FB8EA5"},
@@ -292,76 +282,51 @@ button:disabled{
                 { "id": "#000000"}
             ];
 
+            // Setup SVG
+            var width = 600, height = 600;
+            var svg = d3.select("body").append("svg")
+                .attr("width", width)
+                .attr("height", height);
+            
+            var link, node, text; // d3 selections of svg elements
+
             function doIt(){
-                updateTextAreaFromObjects();
-                updateLinksTextArea(linksArray);
+                updateCirclesTextAreaFromArray();
+                updateLinksTextAreaFromArray(linksArray);
                 svgPrepare();
-                linkrefstonodeobjects();
+                injectNodeObjectsIntoLinkObjects();
+                drawSvgShapesFromArrays(); // make sure correct number of objects instantiated
+                positionSvgElements();
+            } // eo doit
 
-                // draw svg shapes
+            // Drag callbacks
+            function dragstarted(d) {
+                d3.select(this).raise().classed("active", true);
+            }
+            
+            function dragged(d) {
+                d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
+                positionSvgElements(); // keep updating elements while dragging
+            }
+            
+            function dragended(d) {
+                d3.select(this).classed("active", false);
+                updateCirclesTextAreaFromArray();
+            }
+            function updateCirclesTextAreaFromArray(){ // called on drag end, this isn't always updating coords as expected
+                var myJSON = JSON.stringify(nodesArray,null,2);
+                // d3.select("#nodesTextarea").text(myJSON); //NB! this doesn't reliably update the textarea, use plain js instead.
+                document.getElementById('nodesTextarea').value = (myJSON);
+                var i=0;
+                colorsArray.forEach(function(c){
+                    d3.select("#col"+i).property("value",(c.id));
+                    i++;
+                })
+            }
+            // colour picker callback
+            d3.selectAll(".colpicker").on("change",function(){redraw()});
 
-                var link = d3.select("#links").selectAll(".link"),
-                    node = d3.select("#nodes").selectAll(".node"),
-                    text = d3.select("#text").selectAll("text");
-                
-                link = link
-                    .data(linksArray)
-                    .enter().append("path")
-                        .attr("class", "link")
-                        .attr("marker-end", "url(#endArrow)")
-                        .style("stroke-linecap", "round");  // stroke-linecap type
-
-                node = node
-                .data(nodesArray)
-                .enter().append("circle")
-                    .attr("class", "node")
-                    .attr("r", function(d) { return d.radius; })
-                    .attr("fill",function(d) { return colorsArray[d.color].id; })
-                    .call(d3.drag()
-                    .on("start", dragstarted)
-                    .on("drag", dragged)
-                    .on("end", dragended));
-                    
-                text = text
-                    .data(nodesArray)
-                    .enter()
-                    .append("text")
-                    .attr("x", function(d) { return d.x; })
-                    .attr("y", function(d) { return d.y; })
-                    .text( function (d) { return d.id; })
-                    .attr("font-family", "sans-serif")
-                    .attr("font-size", function(d){return fontSize(d.id,d.radius);})
-                    .attr("alignment-baseline","middle")
-                    .attr("text-anchor","middle")
-                    .attr("fill", colorsArray[9].id);
-                
-                ticked();
-                
-                d3.selectAll(".colpicker").on("change",function(){redraw()});
-                // Drag callbacks
-                
-                function fontSize(s,rad){
-                  var n = (250 / s.length)*(rad/100);
-                  n = Math.max(n, 9);
-                  n = Math.min(n,20);
-                  return ""+n+"px";
-                }
-
-                function dragstarted(d) {
-                  d3.select(this).raise().classed("active", true);
-                }
-                
-                function dragged(d) {
-                  d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
-                  ticked();
-                }
-                
-                function dragended(d) {
-                  d3.select(this).classed("active", false);
-                  updateTextAreaFromObjects();
-                }
-                
-                function ticked() {
+            function positionSvgElements() { // called repeatedly during drag
                     node.attr("cx", function(d) { return d.x; })
                         .attr("cy", function(d) { return d.y; });
                     text.attr("x", function(d) { return d.x; })
@@ -371,7 +336,6 @@ button:disabled{
                         diffX = parseFloat(d.target.x - d.source.x);
                         diffY = parseFloat(d.target.y - d.source.y);
 
-            
                         // Length of path from center of source node to center of target node
                         pathLength = Math.sqrt((diffX * diffX) + (diffY * diffY));
           
@@ -430,7 +394,14 @@ button:disabled{
                         return dString;
                     }).attr("marker-end", "url(#endArrow)").attr("marker-start", "url(#startArrow)").attr("stroke",colorsArray[8].id);
                 }
+
+            function fontSize(s,rad){
+                var n = (250 / s.length)*(rad/100);
+                n = Math.max(n, 9);
+                n = Math.min(n,20);
+                return ""+n+"px";
             }
+
             // define button events
             d3.select('button#generate').on('click', function() {
                 var config = {
@@ -489,19 +460,17 @@ button:disabled{
             }
             function redraw(){
                 try {
-                    updateObjectFromTextArea();
                     svg.selectAll("*").remove();
+                    updateArraysFromInput();
                     doIt(true);
                 } catch (ex) {
                     console.error(ex);
                 }
             }
-            function updateObjectFromTextArea(){
-
+            function updateArraysFromInput(){
                 var s = d3.select("#nodesTextarea").property('value')
                 nodesArray = JSON.parse(d3.select("#nodesTextarea").property('value')); // this is how you parse a string into JSON 
                 linksArray = JSON.parse(d3.select("#linksTextarea").property('value')); // this is how you parse a string into JSON 
-                
                 var i=0;
                 colorsArray.forEach(function(c){
                     c.id = d3.select("#col"+i).property("value");
@@ -509,21 +478,10 @@ button:disabled{
                     i++;
                 });
             }
-            function updateTextAreaFromObjects(){
-                var myJSON = JSON.stringify(nodesArray,replacer,2);
-                d3.select("#nodesTextarea").text(myJSON);
-            //   var myJSON = JSON.stringify(colorsArray,replacer,2);
-            //   d3.select("#colorsTextarea").text(myJSON);
-                var i=0;
-                colorsArray.forEach(function(c){
-                    d3.select("#col"+i).property("value",(c.id));
-                    i++;
-                })
 
-            }
-            function updateLinksTextArea(o){
+            function updateLinksTextAreaFromArray(o){
                 var myJSON = JSON.stringify(o,replacer,2);
-                d3.select("#linksTextarea").text(myJSON);
+                document.getElementById('linksTextarea').value = (myJSON);
             }
 
             function svgPrepare(){
@@ -569,7 +527,6 @@ button:disabled{
 
             function replacer(key,value){
                 if (key=="vx"||key=="vy"||key=="index") return undefined;
-                else if (key=="privateProperty2") return undefined;
                 else return value;
             }
                 
@@ -610,8 +567,8 @@ button:disabled{
                                 colorsArray.push(i[1]);
                             });
                             //alert(JSON.stringify(colorsArray[0]));
-                            updateTextAreaFromObjects();
-                            linkrefstonodeobjects();
+                            updateCirclesTextAreaFromArray();
+                            injectNodeObjectsIntoLinkObjects();
                             redraw();
                         } catch (ex) {
                             alert('ex when trying to parse json = ' + ex);
@@ -622,7 +579,7 @@ button:disabled{
             }
             
         }
-        function linkrefstonodeobjects(){
+        function injectNodeObjectsIntoLinkObjects(){
             // Replace link source strings with refs to node objects
             linksArray.forEach(function(l) {
                 const sIndex = nodesArray.findIndex(n => n.id === l.source);
@@ -631,7 +588,48 @@ button:disabled{
                 l.target=nodesArray[tIndex];
             });
         }
+        function drawSvgShapesFromArrays(){
+            // draw svg shapes
+            link = d3.select("#links").selectAll(".link");
+            node = d3.select("#nodes").selectAll(".node");
+            text = d3.select("#text").selectAll("text");
 
+                // create paths for links (coords specified in tick)
+            link = link
+                .data(linksArray)
+                .enter().append("path")
+                    .attr("class", "link")
+                    .attr("marker-end", "url(#endArrow)")
+                    .style("stroke-linecap", "round");  // stroke-linecap type
+
+            // create circles
+            node = node
+            .data(nodesArray)
+            .enter().append("circle")
+                .attr("class", "node")
+                .attr("r", function(d) { return d.radius; })
+                .attr("fill",function(d) { return colorsArray[d.color].id; })
+                .call(d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended));
+                
+            // create text labels
+            text = text
+                .data(nodesArray)
+                .enter()
+                .append("text")
+                .attr("x", function(d) { return d.x; })
+                .attr("y", function(d) { return d.y; })
+                .text( function (d) { return d.id; })
+                .attr("font-family", "sans-serif")
+                .attr("font-size", function(d){return fontSize(d.id,d.radius);})
+                .attr("alignment-baseline","middle")
+                .attr("text-anchor","middle")
+                .attr("fill", colorsArray[9].id)
+                .attr("cx", function(d) { return d.x; })
+                .attr("cy", function(d) { return d.y; });
+        }
         document.getElementById('files').addEventListener('change', handleFileSelect, false);
         doIt();
     </script>
