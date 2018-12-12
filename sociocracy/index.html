@@ -417,9 +417,9 @@ button:disabled{
             });
             function savetojsonfile(){
                 var j = JSON.stringify(makejsonobjectforsave(),null,2);
-                // var date = new Date();
-                // var timestamp = date.getTime();
-                // download(j, 'circles-'+timestamp+'.json', 'application/json');
+                var date = new Date();
+                var timestamp = date.getTime();
+                download(j, 'circles-'+timestamp+'.json', 'application/json');
             }
             function download(content, fileName, contentType) {
                 var a = document.createElement("a");
