@@ -417,9 +417,9 @@ button:disabled{
             });
             function savetojsonfile(){
                 var j = JSON.stringify(makejsonobjectforsave(),null,2);
-                var date = new Date();
-                var timestamp = date.getTime();
-                download(j, 'circles-'+timestamp+'.json', 'application/json');
+                // var date = new Date();
+                // var timestamp = date.getTime();
+                // download(j, 'circles-'+timestamp+'.json', 'application/json');
             }
             function download(content, fileName, contentType) {
                 var a = document.createElement("a");
@@ -432,7 +432,6 @@ button:disabled{
                 
             }
             function makejsonobjectforsave(){
-                
                 obj={};
                 obj.notes={0:"This file represents a diagram saved from https://bitbutter.github.io/sociocracy/."};
                 obj.nodes={};
@@ -444,10 +443,12 @@ button:disabled{
                     i++;
                 });
                 var i=0;
-                linksArray.forEach(function(o){
+                linksArray.forEach(function(o){ //slice returns a new copied array, to avoid modifying original one
                     obj.links[i]=o;
-                    obj.links[i].source = o.source.id;
-                    obj.links[i].target = o.target.id;
+                    if(typeof(o.source)==Object){
+                        obj.links[i].source = o.source.id;
+                        obj.links[i].target = o.target.id;
+                    }
                     i++;
                 });
                 colorsArray.forEach(function(o){
