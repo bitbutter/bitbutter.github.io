@@ -97,6 +97,7 @@
                 // IMAGE: src
                 if( splitTag && splitTag.property == "IMAGE" ) {
                     var imageElement = document.createElement('img');
+					imageElement.height='300';
                     imageElement.src = splitTag.val;
                     storyContainer.appendChild(imageElement);
 
