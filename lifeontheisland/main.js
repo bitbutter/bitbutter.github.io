@@ -182,6 +182,9 @@
 
                 // This is where the save button will save from
                 savePoint = story.state.toJson();
+				
+				// Save the story automatically
+				save()
 
                 // Aaand loop
                 continueStory();
