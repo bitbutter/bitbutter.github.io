@@ -343,14 +343,7 @@
 
         let saveEl = document.getElementById("save");
         if (saveEl) saveEl.addEventListener("click", function(event) {
-            try {
-                window.localStorage.setItem('save-state', savePoint);
-                document.getElementById("reload").removeAttribute("disabled");
-                window.localStorage.setItem('theme', document.body.classList.contains("dark") ? "dark" : "");
-            } catch (e) {
-                console.warn("Couldn't save state");
-            }
-
+            save()
         });
 
         let reloadEl = document.getElementById("reload");
@@ -378,5 +371,14 @@
             document.body.classList.toggle("dark");
         });
     }
+	function save(){
+	 try {
+			window.localStorage.setItem('save-state', savePoint);
+			document.getElementById("reload").removeAttribute("disabled");
+			window.localStorage.setItem('theme', document.body.classList.contains("dark") ? "dark" : "");
+		} catch (e) {
+			console.warn("Couldn't save state");
+		}
+	}
 
 })(storyContent);
