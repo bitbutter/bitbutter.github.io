@@ -210,7 +210,7 @@
         savePoint = story.state.toJson();
 
         continueStory(true);
-
+		save()
         outerScrollContainer.scrollTo(0, 0);
     }
 
