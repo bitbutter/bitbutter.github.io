@@ -344,7 +344,7 @@
             restart();
         });
 
-        let saveEl = document.getElementById("save");
+        /*let saveEl = document.getElementById("save");
         if (saveEl) saveEl.addEventListener("click", function(event) {
             save()
         });
@@ -366,7 +366,7 @@
                 console.debug("Couldn't load save state");
             }
             continueStory(true);
-        });
+        });*/
 
         let themeSwitchEl = document.getElementById("theme-switch");
         if (themeSwitchEl) themeSwitchEl.addEventListener("click", function(event) {
