@@ -1,4 +1,4 @@
-(function(storyContent) {
+/*(function(storyContent) {
 
     // Create ink story from the content using inkjs
     var story = new inkjs.Story(storyContent);
@@ -351,29 +351,6 @@
             restart();
         });
 
-        /*let saveEl = document.getElementById("save");
-        if (saveEl) saveEl.addEventListener("click", function(event) {
-            save()
-        });
-
-        let reloadEl = document.getElementById("reload");
-        if (!hasSave) {
-            reloadEl.setAttribute("disabled", "disabled");
-        }
-        reloadEl.addEventListener("click", function(event) {
-            if (reloadEl.getAttribute("disabled"))
-                return;
-
-            removeAll("p");
-            removeAll("img");
-            try {
-                let savedState = window.localStorage.getItem('save-state');
-                if (savedState) story.state.LoadJson(savedState);
-            } catch (e) {
-                console.debug("Couldn't load save state");
-            }
-            continueStory(true);
-        });*/
 
         let themeSwitchEl = document.getElementById("theme-switch");
         if (themeSwitchEl) themeSwitchEl.addEventListener("click", function(event) {
@@ -393,3 +370,4 @@
 	}
 
 })(storyContent);
+*/
