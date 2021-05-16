@@ -309,6 +309,8 @@
                 story.state.LoadJson(savedState);
 				if (story_so_far) {
 					document.getElementById("story").innerHTML=story_so_far;
+					let outerScrollContainer = document.querySelector('.outerContainer');
+					outerScrollContainer.scrollTo(0,outerScrollContainer.scrollHeight);
 				}
 				return true;
 			}
@@ -382,12 +384,11 @@
 	function save(){
 	 try {
 			window.localStorage.setItem('save-state', savePoint);
-			document.getElementById("reload").removeAttribute("disabled");
+			//document.getElementById("reload").removeAttribute("disabled");
 			window.localStorage.setItem('theme', document.body.classList.contains("dark") ? "dark" : "");
-			let story_so_far = document.getElementById("story").innerHTML;
-			window.localStorage.setItem('story_so_far', story_so_far);
+			window.localStorage.setItem('story_so_far', document.getElementById("story").innerHTML);
 		} catch (e) {
-			console.warn("Couldn't save state");
+			console.warn("Couldn't save state "+e.message);
 		}
 	}
 
