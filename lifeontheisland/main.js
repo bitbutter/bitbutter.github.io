@@ -308,7 +308,7 @@
             if (savedState) {
                 story.state.LoadJson(savedState);
 				if (story-so-far) {
-					document.getElementById("story").innerHTML=story-so-far
+					document.getElementById("story").innerHTML=story-so-far;
 					story.state.LoadJson(savedState);
 				}
 				return true;
@@ -385,7 +385,7 @@
 			window.localStorage.setItem('save-state', savePoint);
 			document.getElementById("reload").removeAttribute("disabled");
 			window.localStorage.setItem('theme', document.body.classList.contains("dark") ? "dark" : "");
-			let story-so-far = document.getElementById("story").innerHTML
+			let story-so-far = document.getElementById("story").innerHTML;
 			window.localStorage.setItem('story-so-far', story-so-far);
 		} catch (e) {
 			console.warn("Couldn't save state");
