@@ -385,9 +385,8 @@
 			window.localStorage.setItem('save-state', savePoint);
 			document.getElementById("reload").removeAttribute("disabled");
 			window.localStorage.setItem('theme', document.body.classList.contains("dark") ? "dark" : "");
-			var story-so-far = document.getElementById("story").innerHTML
+			let story-so-far = document.getElementById("story").innerHTML
 			window.localStorage.setItem('story-so-far', story-so-far);
-
 		} catch (e) {
 			console.warn("Couldn't save state");
 		}
