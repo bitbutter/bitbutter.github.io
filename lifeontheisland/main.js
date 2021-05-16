@@ -304,10 +304,15 @@
 
         try {
             let savedState = window.localStorage.getItem('save-state');
+			let story-so-far = window.localStorage.getItem('story-so-far');
             if (savedState) {
                 story.state.LoadJson(savedState);
-                return true;
-            }
+				if (story-so-far) {
+					document.getElementById("story").innerHTML=story-so-far
+					story.state.LoadJson(savedState);
+				}
+				return true;
+			}
         } catch (e) {
             console.debug("Couldn't load save state");
         }
@@ -380,6 +385,9 @@
 			window.localStorage.setItem('save-state', savePoint);
 			document.getElementById("reload").removeAttribute("disabled");
 			window.localStorage.setItem('theme', document.body.classList.contains("dark") ? "dark" : "");
+			var story-so-far = document.getElementById("story").innerHTML
+			window.localStorage.setItem('story-so-far', story-so-far);
+
 		} catch (e) {
 			console.warn("Couldn't save state");
 		}
