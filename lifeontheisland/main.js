@@ -304,12 +304,12 @@
 
         try {
             let savedState = window.localStorage.getItem('save-state');
-			let story-so-far = window.localStorage.getItem('story-so-far');
+			let story_so_far = window.localStorage.getItem('story_so_far');
             if (savedState) {
                 story.state.LoadJson(savedState);
-				//if (story-so-far) {
-				//	document.getElementById("story").innerHTML=story-so-far;
-				//}
+				if (story_so_far) {
+					document.getElementById("story").innerHTML=story_so_far;
+				}
 				return true;
 			}
         } catch (e) {
@@ -384,8 +384,8 @@
 			window.localStorage.setItem('save-state', savePoint);
 			document.getElementById("reload").removeAttribute("disabled");
 			window.localStorage.setItem('theme', document.body.classList.contains("dark") ? "dark" : "");
-			//let story-so-far = document.getElementById("story").innerHTML;
-			//window.localStorage.setItem('story-so-far', story-so-far);
+			let story_so_far = document.getElementById("story").innerHTML;
+			window.localStorage.setItem('story_so_far', story_so_far);
 		} catch (e) {
 			console.warn("Couldn't save state");
 		}
